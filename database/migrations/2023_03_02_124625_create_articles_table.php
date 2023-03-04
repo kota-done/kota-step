@@ -19,7 +19,7 @@ class CreateArticlesTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->tinyInteger('locked_flg')->default(0);
-            $table->integer('error_count')->unsigned()->default();
+            $table->integer('error_count')->unsigned()->default(0);
             $table->timestamps();
         });
     }
