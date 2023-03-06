@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,7 +9,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+// showLoginで下のページに飛べる。
+Route::get('/','Auth\MainController@showLogin')->name('showLogin');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// ログイン
+Route::post('login','Auth\MainController@showLogin')->name('login');
+
