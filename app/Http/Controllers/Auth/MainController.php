@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\LoginFormRequest;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\Auth;
+// Authの実装
+// ログイン後のページの作成
+// ミドルウェアの設定
 
 class MainController extends Controller
 {
@@ -19,6 +22,17 @@ class MainController extends Controller
      * @param App\Http\Requests\LoginFormRequest $repuest
      */
    public function login(LoginFormRequest $request){
-    dd($request->all());
+    $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            // 認証に成功したので、セッションIDを再生成した。
+            $request->session()->regenerate();
+            // 通ったのでhomeルートでリダイレクトする。合わせて、表示する。 ここのホームは商品画面一覧のメソッド貼らないとだめ。
+            return redirect('home')->with('login_success','ログイン成功しました');
+        }
+        // ダメならエラー表示をつけて、画面戻る。＊出ないと、ログイン後のブレードでエラーのままになるため
+        return back()->withErrors([
+            'login_error'=>'メールアドレスかパスワードが間違っています',
+        ]);
    }
 }
