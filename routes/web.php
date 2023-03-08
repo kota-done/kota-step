@@ -13,5 +13,5 @@
 Route::get('/','Auth\MainController@showLogin')->name('showLogin');
 
 // ログイン
-Route::post('login','Auth\MainController@showLogin')->name('login');
+Route::post('login','Auth\MainController@login')->name('login');
 
