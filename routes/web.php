@@ -16,8 +16,12 @@ Route::group(['middleware' => ['guest']], function () {
 
     // ログイン処理
     Route::post('login','Auth\MainController@login')->name('login');
-    
+   
 });
+// ユーザー新規登録画面にジャンプ
+Route::get('/','Auth\MainController@inputLogin')->name('inputLogin');
+
+
 // ユーザーログイン後しかアクセスできない。
 Route::group(['middleware' => ['auth']], function () {
 

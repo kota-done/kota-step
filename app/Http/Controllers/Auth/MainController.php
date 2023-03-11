@@ -18,6 +18,13 @@ class MainController extends Controller
     public function showLogin(){
         return view('login.page');
     }
+/** 
+ * ログイン画面を表示
+ * @return view
+ */
+    public function inputLogin(){
+        return view('login.user_set');
+    }
     /**
      * @param App\Http\Requests\LoginFormRequest $repuest
      */

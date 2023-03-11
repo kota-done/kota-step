@@ -34,6 +34,7 @@
   <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
  
   <button class="btn btn-lg btn-primary btn-block" type="submit">ログイン</button>
+  <input type="button" onclick="location.href='./user_set.blade.php'" value="新規登録" >
 </form>
 
 </body>
