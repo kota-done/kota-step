@@ -19,6 +19,10 @@
                 <li>名前：{{ Auth::user()->name }}</li>
                 <li>メールアドレス：{{ Auth::user()->email }}</li>
             </ul>
+            <form method="POST" action="{{ route('logout') }}" >
+            @csrf
+                <button class="btn btn-danger">ログアウト</button>
+            </form>
         </div>
     </div>
 </body>

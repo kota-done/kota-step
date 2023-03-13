@@ -11,16 +11,13 @@
 */
 // ユーザーログイン前のみ
 Route::group(['middleware' => ['guest']], function () {
-    // showLoginで下のページに飛べる。
+    // ログイン画面のページに飛べる。
     Route::get('/','Auth\MainController@showLogin')->name('showLogin');
 
     // ログイン処理
     Route::post('login','Auth\MainController@login')->name('login');
    
 });
-// ユーザー新規登録画面にジャンプ
-Route::get('/','Auth\MainController@inputLogin')->name('inputLogin');
-
 
 // ユーザーログイン後しかアクセスできない。
 Route::group(['middleware' => ['auth']], function () {
@@ -29,4 +26,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('home',function(){
         return view('home');
     })->name('home');
+// ログアウト機能
+    Route::post('logout','Auth\MainController@logout')->name('logout');
 });
+// ユーザー新規登録画面にジャンプ
+Route::get('login/user_set','Auth\MainController@inputLogin')->name('inputLogin');
+// ユーザー新規登録
+Route::post('login/store','Auth\MainController@exeStore')->name('store');
+
