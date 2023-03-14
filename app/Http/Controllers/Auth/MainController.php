@@ -33,8 +33,8 @@ class MainController extends Controller
 /**
  * @return 
  */
-    public function exeStore(LoginFormRequest $repuest){
-        $inputs=$repuest->all();
+    public function exeStore(LoginFormRequest $request){
+        $inputs=$request->all();
         
         User::create($inputs);
         \Session::flash('err_msg','登録しました！');
