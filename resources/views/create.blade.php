@@ -10,7 +10,7 @@
 
 
 <div style="width:50%; margin: 0 auto; text-align:center;">
-    <form action="{{ route('sub.store') }}" method="POST">
+    <form action="{{ route('sub.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div>
             商品名：
@@ -18,7 +18,7 @@
         </div>
         <div>
             価格：
-            <input type="text" name="goods_price" placeholder="タイトルの入力欄"/>
+            <input type="text" name="goods_price" placeholder="価格/個"/>
         </div>
         <div>
             メーカー：  
@@ -30,8 +30,16 @@
             </select>
         </div>
         <div>
+            在庫数：
+            <input type="text" name="goods_count" placeholder="在庫数の入力"/>
+        </div>
+        <div>
             コメント：
             <textarea name="goods_comment" placeholder="内容の入力"></textarea>
+        </div>
+        <div>
+            <label for="goods_image">商品画像をアップロードしてください</label>
+            <input type="file" name="goods_image">
         </div>
         <button>登録</button>
     </form>

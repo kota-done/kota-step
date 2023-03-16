@@ -22,9 +22,7 @@ Route::group(['middleware' => ['guest']], function () {
 Route::group(['middleware' => ['auth']], function () {
 
     // ログイン後の商品ページに飛ぶ
-    Route::get('home', function () {
-        return view('home');
-    })->name('home');
+    Route::get('home','SubController@home')->name('home');
     // ログアウト機能
     Route::post('logout', 'Auth\MainController@logout')->name('logout');
 });

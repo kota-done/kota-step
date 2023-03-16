@@ -25,6 +25,27 @@
             </form>
             <a class="goods_set" href="{{ route('create') }}">新規登録</a>
         </div>
+        <h2>登録済み商品一覧</h2>
+        <table class=goods-list>
+            <tr>
+                <th>商品名</th>
+                <th>値段</th>
+                <th>メーカー</th>
+                <th>画像</th>
+                <th>コメント</th>
+            </tr>
+             <tr> 
+                @foreach($goods as $good)
+                <td>{{ $good->id}}</td>
+                <td>{{ $good->goods_name }}</td>
+                <td>{{ $good->goods_price }}</td>
+                <td>{{ $good->goods_maker }}</td>
+                <td>{{ $good->goods_count }}</td>
+                <td>{{ $good->goods_image }}</td>
+                <td>{{ $good->goods_comment }}</td>
+            </tr>
+                @endforeach 
+        </table>
     </div>
 </body>
 </html>

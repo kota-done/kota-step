@@ -17,4 +17,13 @@ class SubController extends Controller
         return redirect()->route('home');
     
     }
+
+    public function home(){
+        // goodsという変数にデータを入れる
+        $goods=Test_user::all();
+        
+        return view('home',
+        // 'home'の中で、＄goodsのデータを配列の形で渡せる
+        ['goods'=>$goods]);
+    }
 }
