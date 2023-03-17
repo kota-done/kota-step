@@ -39,5 +39,8 @@ Route::post('login/store', 'Auth\MainController@exeStore')->name('store');
 
 // 商品新規登録の表示
 Route::get('/goods','SubController@create')->name('create');
+
+// 商品詳細画面の表示=検索フォーム実行後の表示画面
+Route::get('/goods/select','SubController@showDetail')->name('detail');
 // 商品の新規登録
 Route::post('/goods','SubController@subStore')->name('sub.store');

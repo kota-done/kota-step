@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Requests\LoginFormRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
+// パスワードハッシュ化用
+use Illuminate\Support\Facades\Hash;
 // ログアウトようの引用
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,12 +36,18 @@ class MainController extends Controller
  * @return 
  */
     public function exeStore(LoginFormRequest $request){
-        $inputs=$request->all();
-        
-        User::create($inputs);
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+        // Hash::make($request->newPassword);
+        // $inputs=$request->all();
+        // User::create($inputs);
         \Session::flash('err_msg','登録しました！');
         return redirect()->intended('/');
-    } 
+    }
+
     /**
      * @param App\Http\Requests\LoginFormRequest $repuest
      */

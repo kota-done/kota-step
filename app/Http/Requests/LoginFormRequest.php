@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use App\Test_user;
 class LoginFormRequest extends FormRequest
 {
     /**
