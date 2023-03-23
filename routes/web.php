@@ -40,7 +40,12 @@ Route::post('login/store', 'Auth\MainController@exeStore')->name('store');
 // 商品新規登録の表示
 Route::get('/goods','SubController@create')->name('create');
 
-// 商品詳細画面の表示=検索フォーム実行後の表示画面
-Route::get('/goods/select','SubController@showDetail')->name('detail');
+// 検索フォーム実行
+Route::get('/goods/select','SubController@showSelect')->name('select');
 // 商品の新規登録
 Route::post('/goods','SubController@subStore')->name('sub.store');
+// 商品詳細メソど
+Route::get('/goods/{id}','SubController@showDetail')->name('detail');
+// 商品編集画面表示＋編集情報のセーブ
+Route::get('/goods/edit/{id}','SubController@showEdit')->name('edit');
+Route::post('/goods/save','SubController@exeSave')->name('save');

@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('css/app.css' )}}">
+    <link rel="stylesheet" href="{{ asset('css/home.css' )}}">
     <title>商品一覧画面</title>
 </head>
 
@@ -26,13 +27,23 @@
                 <li>メールアドレス：{{ Auth::user()->email }}</li>
             </ul>
             <div>
-                <form action="{{ route('detail') }}" method="GET">
+                <form action="{{ route('select') }}" method="GET" class="goods_select">
                     @csrf
                     <input type="search" placeholder="商品名を入力" name="search" value="@if (isset($search)) {{ $search }} @endif">
+                    <label for="">メーカー名選択
+                        <select name="select"  value="@if (isset($select)) {{ $select }} @endif" >
+                            <option value="">未選択</option>
+                            @foreach($categories as $id =>$goods_maker)
+                            <option value="{{$id}}">
+                            {{ $goods_maker}}
+                            </option>
+                            @endforeach
+                        </select>
+                    </label>
                     <div>
                         <button type="submit">検索</button>
                         <button>
-                            <a href="{{ route('detail')}}" class="text-white">クリア</a>
+                            <a href="{{ route('select')}}" class="text-white">クリア</a>
                         </button>
                     </div>
                 </form>
@@ -50,14 +61,14 @@
                 <th>コメント</th>
             </tr>
             <tr>
-            @foreach($goods as $good)
+                @foreach($goods as $good)
                 <td>{{ $good->id}}</td>
                 <td>{{ $good->goods_name }}</td>
                 <td>{{ $good->goods_price }}</td>
                 <td>{{ $good->goods_maker }}</td>
                 <td>{{ $good->goods_count }}</td>
-                <td>{{ $good->goods_image }}</td>
-                <td>{{ $good->goods_comment }}</td>
+                <td>
+                <td><a href="/kota-fail/public/goods/{{ $good->id }}">詳細</a></td>
             </tr>
             @endforeach
         </table>
