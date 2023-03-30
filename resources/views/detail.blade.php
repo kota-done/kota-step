@@ -15,6 +15,9 @@
 
     </p>
     @endif
+    <form action="{{ route('home') }}" method="GET">
+    @csrf
+    <td><button type="submit" class="btn-primary" onclick="">戻る</button>
     <table class=goods-list>
         <tr>
             <th>商品名</th>
@@ -26,6 +29,7 @@
             <th> </th>
         </tr>
         <tr>
+            
             <td>{{ $good->id}}</td>
             <td>{{ $good->goods_name }}</td>
             <td>{{ $good->goods_price }}</td>
@@ -35,7 +39,7 @@
             <td><img src="{{ asset('/storage/img/'.$good->goods_image) }}"></td>
 
             <td>
-            <a href="/kota-fail/public/goods/edit/{ $good->id }">編集</a>
+            <a href="{{ route('edit',['id' => $good->id ]) }}">編集</a>
             </td>
         </tr>
     </table>

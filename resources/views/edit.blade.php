@@ -12,6 +12,8 @@
 <div style="width:50%; margin: 0 auto; text-align:center;">
     <form action="{{ route('save') }}" method="POST" enctype="multipart/form-data">
         @csrf
+     
+        <input type="hidden" name="id" value="{{ $good->id}}" >
         <div>
             商品名：
             <input type="text" name="goods_name" placeholder="名前の入力欄" value="{{ $good->goods_name }}"/>
@@ -39,15 +41,13 @@
         </div>
         <div>
             <label for="goods_image">商品画像をアップロードしてください</label>
-            <input type="file" name="goods_image" value="{{ $good->goods_image }}">
+            <input type="file" name="goods_image"  accept=".png,.jpg,.jpeg,img/png,img/jpg"> 
+            <img src="{{ asset('/storage/img/'.$good->goods_image) }}">
         </div>
         <button>更新</button>
     </form>
-    <form action="{{ route('detail')}}" method="GET">
-        @csrf
-        <button>戻る</button>
-    </form>
-</div>
+    <a href="{{ route('detail',['id' => $good->id ]) }}">戻る
+    </a>
 
 </body>
 </html>

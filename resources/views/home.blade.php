@@ -26,16 +26,19 @@
                 <li>名前：{{ Auth::user()->name }}</li>
                 <li>メールアドレス：{{ Auth::user()->email }}</li>
             </ul>
+            @if(session('del_msg'))
+            <p class="text-danger">{{ session('del_msg') }} </p>
+            @endif
             <div>
                 <form action="{{ route('select') }}" method="GET" class="goods_select">
                     @csrf
                     <input type="search" placeholder="商品名を入力" name="search" value="@if (isset($search)) {{ $search }} @endif">
                     <label for="">メーカー名選択
-                        <select name="select"  value="@if (isset($select)) {{ $select }} @endif" >
+                        <select name="select" value="@if (isset($select)) {{ $select }} @endif">
                             <option value="">未選択</option>
                             @foreach($categories as $id =>$goods_maker)
                             <option value="{{$id}}">
-                            {{ $goods_maker}}
+                                {{ $goods_maker}}
                             </option>
                             @endforeach
                         </select>
@@ -47,31 +50,53 @@
                         </button>
                     </div>
                 </form>
+            <form action="{{route('sort')}}" method="GET">
+                @csrf
+                <button type="submit" name="sort" value="1">作成日順</button>
+                <button type="submit" name="sort" value="">あいうえお順</button>
+            </form>
             </div>
             <a class="goods_set" href="{{ route('create') }}">新規登録</a>
         </div>
         <h2>登録済み商品一覧</h2>
         <table class=goods-list>
             <tr>
+                <th></th>
                 <th>商品名</th>
                 <th>値段</th>
                 <th>メーカー</th>
                 <th>在庫数</th>
-                <th>画像</th>
-                <th>コメント</th>
+                <th></th>
+                <th></th>
+                <th></th>
             </tr>
+            
+             @foreach($goods as $good)
             <tr>
-                @foreach($goods as $good)
                 <td>{{ $good->id}}</td>
                 <td>{{ $good->goods_name }}</td>
-                <td>{{ $good->goods_price }}</td>
+                <td>{{ $good->goods_price}}</td>
                 <td>{{ $good->goods_maker }}</td>
                 <td>{{ $good->goods_count }}</td>
-                <td>
-                <td><a href="/kota-fail/public/goods/{{ $good->id }}">詳細</a></td>
+                <form action="{{ route('delete',['id' => $good->id ] )}}" method="POST" enctype="multipart/form-data" onsubmit="return checkDelete()">
+                    @csrf
+                    <td><button type="submit" class="btn-primary" onclick="">削除</button></td>
+                </form>
+                 <td><a href="/kota-fail/public/goods/{{ $good->id }}">詳細</a></td>
             </tr>
             @endforeach
         </table>
+        <script>
+            function checkDelete(){
+            if(window.confirm('削除しますか？')){
+                return true;
+                } 
+                else{
+                    return false;
+            }
+            }
+        
+        </script>
     </div>
 </body>
 

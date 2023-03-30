@@ -10,6 +10,9 @@
 |
 */
 // ユーザーログイン前のみ
+
+// use Illuminate\Routing\Route;
+
 Route::group(['middleware' => ['guest']], function () {
     // ログイン画面のページに飛べる。
     Route::get('/', 'Auth\MainController@showLogin')->name('showLogin');
@@ -40,8 +43,13 @@ Route::post('login/store', 'Auth\MainController@exeStore')->name('store');
 // 商品新規登録の表示
 Route::get('/goods','SubController@create')->name('create');
 
+// 商品削除
+Route::post('/goods/delete/{id}','SubController@exeDelete')->name('delete');
+
 // 検索フォーム実行
 Route::get('/goods/select','SubController@showSelect')->name('select');
+// ソート機能
+Route::get('/goods/sort','SubController@showSort')->name('sort');
 // 商品の新規登録
 Route::post('/goods','SubController@subStore')->name('sub.store');
 // 商品詳細メソど

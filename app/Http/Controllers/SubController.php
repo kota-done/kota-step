@@ -5,56 +5,62 @@ namespace App\Http\Controllers;
 use App\Select;
 use Illuminate\Http\Request;
 use App\Test_user;
+use Illuminate\Support\Facades\Storage;
+use PhpParser\Node\Stmt\TryCatch;
 
 class SubController extends Controller
 {
-    public function create(){
+    public function create()
+    {
         return view('create');
     }
 
-    public function subStore(Request $request){
+    public function subStore(Request $request)
+    {
         $path = $request->file('goods_image')->store('public/img');
         Test_user::create([
-            'id'=>$request->id,
-          'goods_name' => $request->goods_name,
-          'goods_price'=>$request->goods_price,
-           'goods_maker'=>$request->goods_maker,
-           'goods_count'=>$request->goods_count,
-           'goods_comment'=>$request->goods_comment,
-          'goods_image' => basename($path)
+            'id' => $request->id,
+            'goods_name' => $request->goods_name,
+            'goods_price' => $request->goods_price,
+            'goods_maker' => $request->goods_maker,
+            'goods_count' => $request->goods_count,
+            'goods_comment' => $request->goods_comment,
+            'goods_image' => basename($path)
         ]);
         return redirect()->route('home')->with('message', '作成しました');
-        }
-    
+    }
 
-    public function home(Request $request){
+
+    public function home(Request $request)
+    {
         // goodsという変数にデータを入れる
-        $goods=Test_user::all();
+        $goods = Test_user::all();
         $category = new Select();
         $categories = $category->getLists();
-        
-        return view('home',[
-        // 'home'の中で、＄goodsのデータを配列の形で渡せる
-            'goods'=>$goods,
-            'categories'=>$categories
+
+        return view('home', [
+            // 'home'の中で、＄goodsのデータを配列の形で渡せる
+            'goods' => $goods,
+            'categories' => $categories
         ]);
     }
-    
+
     /**
      * ブログ詳細を表示
      * @param int $id
      * @return view
      */
-    public function showDetail($id){
-        $good=Test_user::find($id);
+    public function showDetail($id)
+    {
 
-        if(is_null($good)){
-            \Session::flash('err_msg','詳細データがありません');
+        $good = Test_user::find($id);
+
+        if (is_null($good)) {
+            \Session::flash('err_msg', '詳細データがありません');
             redirect()->route('home');
-
         }
-        
-        return view('detail',['good'=>$good]);
+
+        return view('detail', ['good' => $good]);
     }
 
     /**
@@ -62,48 +68,111 @@ class SubController extends Controller
      * @param int $id
      * @return view
      */
-    public function showEdit($id){
-        $good=Test_user::find($id);
+    public function showEdit($id)
+    {
+
+        $good = Test_user::find($id);
+
+        if (is_null($good)) {
+            \Session::flash('err_msg', '詳細データがありません');
+            redirect()->route('home');
+        }
+
+        return view('edit', ['good' => $good]);
+    }
+
+
+    // 編集による内容変更メソッド
+    public function exeSave(Request $request)
+    {
+        $inputs = $request->all();
+        $good= Test_user::find($inputs['id']);
+        $goods_image=$request->file('goods_image');
+        // 元の画像のパス
+        $path = $good->goods_image;
+        
+    
+        if (isset($goods_image)) {
+            // 現在の画像ファイルの削除
+            \Storage::disk('public')->delete($path);
+            // 選択された画像ファイルを保存してパスをセット
+            $path = $goods_image->store('public/img');
+        }
+         $good->update( [
+            'id'=>$request->id,
+            'goods_name' => $request->goods_name,
+            'goods_price' => $request->goods_price,
+            'goods_maker' => $request->goods_maker,
+            'goods_count' => $request->goods_count,
+            'goods_comment' => $request->goods_comment,
+            'goods_image' => basename($path),
+        ]);
+        
+        return redirect()->route('edit', ['id' => $good->id])->with('message', '編集しました');
+    }
+
+    // 検索結果を返すメソッドをhomeに組み込む
+    public function showSelect(Request $request)
+    {
+        $goods = Test_user::paginate(20);
+
+        $search = $request->input('search');
+        $select = $request->input('select');
+        $category = new Select();
+        $categories = $category->getLists();
+
+        $query = Test_user::query();
+
+        if ($search) {
+            $spaceConversion = mb_convert_kana($search, 's');
+
+            $wordArraySearched = preg_split('/[\s,]+/', $spaceConversion, -1, PREG_SPLIT_NO_EMPTY);
+
+            foreach ($wordArraySearched as $value) {
+                $query->where('goods_name', 'like', '%' . $value . '%');
+            }
+        }
+        if ($select) {
+            $query->where('select', $select);
+        }
+        $goods = $query->paginate(20);
+        return view('home', compact('goods', 'search', 'select', 'categories'));
+    }
+
+    /**
+     * 削除
+     * @param int $id
+     * @return view
+     */
+    public function exeDelete($id)
+    {
+        if (empty($id)) {
+            \Session::flash('err_msg', '詳細データがありません');
+            redirect()->route('home');
+        }
+        try{
+            Test_user::destroy($id);
+        }catch(\Throwable $e){
+            abort(500);
+        }
+        \Session::flash('del_msg', '削除しました');
        
 
-        if(is_null($good)){
-            \Session::flash('err_msg','詳細データがありません');
-            redirect()->route('home');
-
-        }
-        
-        return view('edit',['good'=>$good]);
+        return redirect(route('home'));
     }
 
 
-// 検索結果を返すメソッドをhomeに組み込む
-    public function showSelect(Request $request){
-       $goods=Test_user::paginate(20);
-
-       $search=$request->input('search');
-       $select=$request->input('select');
-       $category = new Select();
-       $categories = $category->getLists();
-
-       $query=Test_user::query();
-
-       if($search){
-            $spaceConversion=mb_convert_kana($search,'s');
-
-            $wordArraySearched= preg_split('/[\s,]+/',$spaceConversion,-1, PREG_SPLIT_NO_EMPTY);
-
-            foreach($wordArraySearched as $value){
-                $query->where('goods_name','like','%'.$value.'%');
+    // ソート機能
+    public function showSort(Request $request){
+        $sort=$request->get('sort');  
+        if ($sort) {
+            if ($sort === '1') {
+                $goods = Test_user::orderBy('created_at')->get();
             }
-
+        } else {
+            $goods = Test_user::all();
         }
-        if($select){
-            $query->where('select',$select);
-            
-        }
-        $goods=$query->paginate(20);
-        return view('home', compact('goods','search','select','categories'));
-
+        return view('home',[ 'goods' => $goods]);
     }
-        
+
 }
