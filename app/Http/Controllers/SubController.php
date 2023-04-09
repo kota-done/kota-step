@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Consts\MessageConst;
 use App\Select;
 use Illuminate\Http\Request;
 use App\Test_user;
 use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\TryCatch;
+use Intervention\Image\Facades\Image;
 
 class SubController extends Controller
 {
@@ -17,16 +19,30 @@ class SubController extends Controller
 
     public function subStore(Request $request)
     {
-        $path = $request->file('goods_image')->store('public/img');
-        Test_user::create([
-            'id' => $request->id,
-            'goods_name' => $request->goods_name,
-            'goods_price' => $request->goods_price,
-            'goods_maker' => $request->goods_maker,
-            'goods_count' => $request->goods_count,
-            'goods_comment' => $request->goods_comment,
-            'goods_image' => basename($path)
-        ]);
+        if($request->goods_image!=null){
+            $path = $request->file('goods_image')->store('public/img');
+
+        }
+       
+        \DB::beginTransaction();
+        try {
+
+            Test_user::create([
+                'id' => $request->id,
+                'goods_name' => $request->goods_name,
+                'goods_price' => $request->goods_price,
+                'goods_maker' => $request->goods_maker,
+                'goods_count' => $request->goods_count,
+                'goods_comment' => $request->goods_comment,
+                'goods_image' => basename($path)
+            ]);
+            \DB::commit();
+        } catch (\Exception $e) {
+            abort(500);
+            \DB::rollback();
+        }
+
+
         return redirect()->route('home')->with('message', '作成しました');
     }
 
@@ -34,7 +50,8 @@ class SubController extends Controller
     public function home(Request $request)
     {
         // goodsという変数にデータを入れる
-        $goods = Test_user::all();
+        $model = new Test_user();
+        $goods = $model->getList();
         $category = new Select();
         $categories = $category->getLists();
 
@@ -86,29 +103,39 @@ class SubController extends Controller
     public function exeSave(Request $request)
     {
         $inputs = $request->all();
-        $good= Test_user::find($inputs['id']);
-        $goods_image=$request->file('goods_image');
+        $good = Test_user::find($inputs['id']);
+        $goods_image = $request->file('goods_image');
         // 元の画像のパス
         $path = $good->goods_image;
-        
-    
-        if (isset($goods_image)) {
-            // 現在の画像ファイルの削除
-            \Storage::disk('public')->delete($path);
-            // 選択された画像ファイルを保存してパスをセット
-            $path = $goods_image->store('public/img');
+        \DB::beginTransaction();
+
+        try {
+            if (isset($goods_image)) {
+                // 現在の画像ファイルの削除
+                \Storage::disk('public')->delete($path);
+                // 選択された画像ファイルを保存してパスをセット
+                $path = $goods_image->store('public/img');
+            }
+            $good->update([
+                'id' => $request->id,
+                'goods_name' => $request->goods_name,
+                'goods_price' => $request->goods_price,
+                'goods_maker' => $request->goods_maker,
+                'goods_count' => $request->goods_count,
+                'goods_comment' => $request->goods_comment,
+                'goods_image' => basename($path),
+            ]);
+            \DB::commit();
+           
+        } catch (\Exception $e) {
+            \DB::rollback();
         }
-         $good->update( [
-            'id'=>$request->id,
-            'goods_name' => $request->goods_name,
-            'goods_price' => $request->goods_price,
-            'goods_maker' => $request->goods_maker,
-            'goods_count' => $request->goods_count,
-            'goods_comment' => $request->goods_comment,
-            'goods_image' => basename($path),
-        ]);
-        
-        return redirect()->route('edit', ['id' => $good->id])->with('message', '編集しました');
+        return redirect()->route('edit', [
+        'id' => $good->id,
+        'status'=>1,
+
+    ]);
+        // ->with('message', '編集しました');
     }
 
     // 検索結果を返すメソッドをhomeに組み込む
@@ -150,29 +177,34 @@ class SubController extends Controller
             \Session::flash('err_msg', '詳細データがありません');
             redirect()->route('home');
         }
-        try{
+        try {
             Test_user::destroy($id);
-        }catch(\Throwable $e){
+        } catch (\Throwable $e) {
             abort(500);
         }
         \Session::flash('del_msg', '削除しました');
-       
+
 
         return redirect(route('home'));
     }
-
-
-    // ソート機能
-    public function showSort(Request $request){
-        $sort=$request->get('sort');  
-        if ($sort) {
-            if ($sort === '1') {
-                $goods = Test_user::orderBy('created_at')->get();
-            }
-        } else {
-            $goods = Test_user::all();
-        }
-        return view('home',[ 'goods' => $goods]);
-    }
-
 }
+
+    // ソート機能　すでにIDでソート機能をモデルでつけているため、追加で入れるとバグ発生する
+//     public function showSort(Request $request){
+//         $sort=$request->get('sort');  
+//         if ($sort) {
+//             if ($sort === '1') {
+//                 $goods = Test_user::orderBy('created_at')->get();
+//             }
+//             } elseif ($sort === '2') {
+//             $goods = Test_user::orderBy('created_at', 'DESC')->get();
+//                 }
+//             else {
+//             $goods = Test_user::all();
+//         }
+//         return view('home',[ 
+//             'sort'=>$sort,
+//             'goods' => $goods]);
+//     }
+
+// }

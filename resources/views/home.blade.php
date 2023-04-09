@@ -50,11 +50,12 @@
                         </button>
                     </div>
                 </form>
-            <form action="{{route('sort')}}" method="GET">
+                <!-- すでに一覧でIDでソートしているため、追加でソート機能を入れるとバグ発生 -->
+            <!-- <form action="{{route('sort')}}" method="GET">
                 @csrf
-                <button type="submit" name="sort" value="1">作成日順</button>
+                <button type="submit" name="sort" value="@if (!isset($sort) || $sort !== '1') 1 @elseif ($sort === '1') 2 @endif">作成日順</button>
                 <button type="submit" name="sort" value="">あいうえお順</button>
-            </form>
+            </form> -->
             </div>
             <a class="goods_set" href="{{ route('create') }}">新規登録</a>
         </div>
@@ -69,6 +70,7 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
             
              @foreach($goods as $good)
@@ -78,6 +80,7 @@
                 <td>{{ $good->goods_price}}</td>
                 <td>{{ $good->goods_maker }}</td>
                 <td>{{ $good->goods_count }}</td>
+                <td>{{$good->created_at}}</td>
                 <form action="{{ route('delete',['id' => $good->id ] )}}" method="POST" enctype="multipart/form-data" onsubmit="return checkDelete()">
                     @csrf
                     <td><button type="submit" class="btn-primary" onclick="">削除</button></td>
