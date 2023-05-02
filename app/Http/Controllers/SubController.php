@@ -52,13 +52,13 @@ class SubController extends Controller
         // goodsという変数にデータを入れる
         $model = new Test_user();
         $goods = $model->getList();
-        $category = new Select();
-        $categories = $category->getLists();
+        // $category = new Select();
+        // $categories = $category->getLists();
 
         return view('home', [
             // 'home'の中で、＄goodsのデータを配列の形で渡せる
             'goods' => $goods,
-            'categories' => $categories
+            // 'categories' => $categories
         ]);
     }
 
@@ -136,34 +136,6 @@ class SubController extends Controller
 
     ]);
         // ->with('message', '編集しました');
-    }
-
-    // 検索結果を返すメソッドをhomeに組み込む
-    public function showSelect(Request $request)
-    {
-        $goods = Test_user::paginate(20);
-
-        $search = $request->input('search');
-        $select = $request->input('select');
-        $category = new Select();
-        $categories = $category->getLists();
-
-        $query = Test_user::query();
-
-        if ($search) {
-            $spaceConversion = mb_convert_kana($search, 's');
-
-            $wordArraySearched = preg_split('/[\s,]+/', $spaceConversion, -1, PREG_SPLIT_NO_EMPTY);
-
-            foreach ($wordArraySearched as $value) {
-                $query->where('goods_name', 'like', '%' . $value . '%');
-            }
-        }
-        if ($select) {
-            $query->where('select', $select);
-        }
-        $goods = $query->paginate(20);
-        return view('home', compact('goods', 'search', 'select', 'categories'));
     }
 
     /**

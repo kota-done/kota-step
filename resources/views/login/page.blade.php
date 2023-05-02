@@ -11,6 +11,9 @@
   <!-- styles -->
   <link rel="stylesheet" href="{{ asset('css/app.css' )}}">
   <link rel="stylesheet" href="{{ asset('css/signin.css' )}}">
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+  
 </head>
 
 <body>
@@ -44,7 +47,8 @@
     <!-- <input type="button" onclick="location.href='./user_set.blade.php'" value="新規登録" > -->
     <a class="user-set" href="{{ route('inputLogin') }}">新規登録</a>
   </form>
- 
+
+ </script>
 </body>
 
 </html>

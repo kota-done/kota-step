@@ -46,10 +46,9 @@ Route::get('/goods','SubController@create')->name('create');
 // 商品削除
 Route::post('/goods/delete/{id}','SubController@exeDelete')->name('delete');
 
-// 検索フォーム実行
-Route::get('/goods/select','SubController@showSelect')->name('select');
 // ソート機能
 Route::get('/goods/sort','SubController@showSort')->name('sort');
+
 // 商品の新規登録
 Route::post('/goods','SubController@subStore')->name('sub.store');
 // 商品詳細メソど
@@ -57,3 +56,7 @@ Route::get('/goods/{id}','SubController@showDetail')->name('detail');
 // 商品編集画面表示＋編集情報のセーブ
 Route::get('/goods/edit/{id}','SubController@showEdit')->name('edit');
 Route::post('/goods/save','SubController@exeSave')->name('save');
+
+
+
+

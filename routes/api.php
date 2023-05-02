@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,3 +17,11 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+// // 検索フォーム実行　非同期処理
+Route::post('/goods/select','SalesController@showSelect')->name('select');
+
+
+// 非同期処理による一覧表示
+Route::get('/rehome','SalesController@showRehome')->name('rehome');
