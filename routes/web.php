@@ -43,8 +43,6 @@ Route::post('login/store', 'Auth\MainController@exeStore')->name('store');
 // 商品新規登録の表示
 Route::get('/goods','SubController@create')->name('create');
 
-// 商品削除
-Route::post('/goods/delete/{id}','SubController@exeDelete')->name('delete');
 
 // ソート機能
 Route::get('/goods/sort','SubController@showSort')->name('sort');

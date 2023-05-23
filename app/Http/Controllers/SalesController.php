@@ -34,6 +34,7 @@ class SalesController extends Controller
       return response()->json($search);
    }
 
+
    // 一覧表示のメソッド
    public function showRehome(){
       $dates = new Sale();
@@ -45,6 +46,98 @@ class SalesController extends Controller
 
       return response()->json($goods_home); 
    }
+
+
+   // 商品価格の絞り込み（上限・下限）メソッド
+   public function showPrice(Request $request){
+
+      $price= Sale::query();
+      $upperPrice = $request->get('upper_price');
+      $lowerPrice = $request->get('lower_price');
+
+      //  上限・下限両方とも毎回処理する。
+      if(!is_null($upperPrice)){
+         $price->where('goods_price','<=',$upperPrice)->get();
+         
+      }
+      if(!is_null($lowerPrice)){
+         $price->where('goods_price','>=',$lowerPrice)->get();
+
+      }
+      $data=$price->paginate(20);
+
+      foreach ($data as $url) {
+         $url->detailurl = route('detail', ['id' => $url->id]);
+      }
+
+      return response()->json($data); 
+   }
+
+
+   // 在庫数による上限・下限値の絞り込みメソッド
+    public function showStock(Request $request){
+
+      $stock= Sale::query();
+      $upperStock = $request->get('upper_stock');
+      $lowerStock = $request->get('lower_stock');
+
+      //  上限・下限両方とも毎回処理する。
+      if(!is_null($upperStock)){
+         $stock->where('goods_count','<=',$upperStock)->get();
+         
+      }
+      if(!is_null($lowerStock)){
+         $stock->where('goods_count','>=',$lowerStock)->get();
+
+      }
+      $data=$stock->paginate(20);
+
+      foreach ($data as $url) {
+         $url->detailurl = route('detail', ['id' => $url->id]);
+      }
+
+      return response()->json($data); 
+   }
+
+   public function exeDelete(Request $request,Sale $sale){
+      
+      $sale =Sale::find($request->id);
+      $sale->delete();
+      return response()->json($sale);
+   }
+
+
+
+
+
+
+
+
+
+
+   /**
+     * 削除
+     * @param int $id
+      * @return view
+     */
+   //  public function exeDelete($id)
+   //  {
+   //      if (empty($id)) {
+   //          \Session::flash('err_msg', '詳細データがありません');
+   //          redirect()->route('home');
+   //      }
+   //      try {
+   //          Test_user::destroy($id);
+   //      } catch (\Throwable $e) {
+   //          abort(500);
+   //      }
+   //      \Session::flash('del_msg', '削除しました');
+
+
+   //      return redirect(route('home'));
+   //  }
+
+
 }
 
 
@@ -52,48 +145,3 @@ class SalesController extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-//     // 検索結果を返すメソッドをhomeに組み込む
-//  public function showSelect(){
-//    try{
-//       $sale = Sale::all();
-//       $result=[
-//          'result'=>true,
-//          'goods_name' => $sale->goods_name,
-   
-//       ];
-//    } catch(\Exception $e){
-//       $result=[
-//          'result'=>false,
-//          'error'=>[
-//             'messages'=>[$e->getMessage()]
-//          ],
-//       ];
-//       return $this->resConversionJson($result, $e->getCode());
-//    }
-//       return $this->resConversionJson($result);
-//    }
-
-//    private function resConversionJson($result,$data){
-//       $data=Sale::where('goods_name','like','%' .$result. '%')->withCount('id')->orderBy('id', 'desc')->get();
-
-//       return response()->json($data);
-
-//    }
-  
- 
-// }
-
-
-// //  $data=Sale::where('goods_name','like','%' .$searchSale. '%')->withCount('id')->orderBy('id', 'desc')->get();
-// dd($data);
-// return response()->json($data);

@@ -138,27 +138,6 @@ class SubController extends Controller
         // ->with('message', '編集しました');
     }
 
-    /**
-     * 削除
-     * @param int $id
-     * @return view
-     */
-    public function exeDelete($id)
-    {
-        if (empty($id)) {
-            \Session::flash('err_msg', '詳細データがありません');
-            redirect()->route('home');
-        }
-        try {
-            Test_user::destroy($id);
-        } catch (\Throwable $e) {
-            abort(500);
-        }
-        \Session::flash('del_msg', '削除しました');
-
-
-        return redirect(route('home'));
-    }
 }
 
     // ソート機能　すでにIDでソート機能をモデルでつけているため、追加で入れるとバグ発生する
