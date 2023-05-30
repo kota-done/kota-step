@@ -11,6 +11,12 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"
         integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    {{-- ソート機能を追加 --}}
+    <script src="
+            https://cdn.jsdelivr.net/npm/tablesorter@2.31.3/dist/js/jquery.tablesorter.combined.min.js
+            "></script>
+    <link href="https://cdn.jsdelivr.net/npm/tablesorter@2.31.3/dist/css/theme.bootstrap_4.min.css" rel="stylesheet">
+
 </head>
 
 <body>
@@ -52,19 +58,15 @@
                 <input type="text" placeholder="下限数" class="lower_stock" value="">
                 <button type="submit" class="sale_stock_btn">検索</button>
             </div>
-            <label for="calum"><span class="badge badge-danger ml-2">ソートによる絞り込み</span></label>
-            <select name="calum" id="calum" class="form-control">
-                <option value="goods_name">商品名</option>
-                <option value="goods_maker">メーカー</option>
-
+        
             </select>
             <a class="goods_set" href="{{ route('create') }}">新規登録</a>
         </div>
         <h2>登録済み商品一覧</h2>
-        <table class=goods-list>
+        <table class=goods-list id="table_sort">
             <thead>
                 <tr>
-                    <th></th>
+                    <th>ID</th>
                     <th>商品名</th>
                     <th>値段</th>
                     <th>メーカー</th>
@@ -247,7 +249,7 @@
         $(function() {
             // ボタンを押したら、処理を行いjsonで引数にして返す予定
             $(".sale_stock_btn").on("click", function() {
-                $('.goods-list tbody').empty();
+
                 var upper_stock = $('.upper_stock').val();
                 var lower_stock = $('.lower_stock').val();
 
@@ -310,7 +312,9 @@
                 if (deleteConfirm == true) {
 
                     $(this) // クリックした削除ボタンを指定する（ ここがthisであることは重要です ）
-                        .closest("tr") // 指定した要素の直近のtr要素を取得する　削除情報を再取得して表示でも良いが、一度フロントサイドのみで削除することととした。サーバー側でも削除済み
+                        .closest(
+                            "tr"
+                        ) // 指定した要素の直近のtr要素を取得する　削除情報を再取得して表示でも良いが、一度フロントサイドのみで削除することととした。サーバー側でも削除済み
                         .remove();
                     $.ajax({
                             type: 'POST',
@@ -338,6 +342,83 @@
                 }
             });
         });
+
+
+        // テーブルソートのプラグインを利用
+        $(document).ready(function() {
+            $("#table_sort").tablesorter();
+        });
+        // //ソート機能
+        // $(function() {
+        //     let column_no = 0; //今回クリックされた列番号
+        //     let column_no_prev = 0; //前回クリックされた列番号
+        //     $(".goods-list th").on("click", function() {
+        //         column_no = this.cellIndex;
+        //         let table = this.parentNode.parentNode.parentNode;
+        //         let sortType = 0; //0:数値 1:文字
+        //         let sortArray = new Array; //クリックした列のデータを全て格納する配列
+        //         for (let r = 1; r < table.rows.length; r++) {
+        //             //行番号と値を配列に格納
+        //             let column = new Object;
+        //             column.row = table.rows[r];
+        //             column.value = table.rows[r].cells[column_no].textContent;
+        //             sortArray.push(column);
+        //             //数値判定
+        //             if (isNaN(Number(column.value))) {
+        //                 sortType = 1; //値が数値変換できなかった場合は文字列ソート
+        //             }
+        //         }
+        //         if (sortType == 0) { //数値ソート
+        //             if (column_no_prev == column_no) { //同じ列が2回クリックされた場合は降順ソート
+        //                 sortArray.sort(compareNumberDesc);
+        //             } else {
+        //                 sortArray.sort(compareNumber);
+        //             }
+        //         } else { //文字列ソート
+        //             if (column_no_prev == column_no) { //同じ列が2回クリックされた場合は降順ソート
+        //                 sortArray.sort(compareStringDesc);
+        //             } else {
+        //                 sortArray.sort(compareString);
+        //             }
+        //         }
+        //     })
+        //     let tbody = this.parentNode.parentNode;
+        //     for (let i = 0; i < sortArray.length; i++) {
+        //         tbody.appendChild(sortArray[i].row);
+        //     }
+        //     //昇順／降順ソート切り替えのために列番号を保存
+        //     if (column_no_prev == column_no) {
+        //         column_no_prev = -1; //降順ソート
+        //     } else {
+        //         column_no_prev = column_no;
+        //     }
+        //     //数値ソート（昇順）
+        //     function compareNumber(a, b) {
+        //         return a.value - b.value;
+        //     }
+        //     //数値ソート（降順）
+        //     function compareNumberDesc(a, b) {
+        //         return b.value - a.value;
+        //     }
+        //     //文字列ソート（昇順）
+        //     function compareString(a, b) {
+        //         if (a.value < b.value) {
+        //             return -1;
+        //         } else {
+        //             return 1;
+        //         }
+        //         return 0;
+        //     }
+        //     //文字列ソート（降順）
+        //     function compareStringDesc(a, b) {
+        //         if (a.value > b.value) {
+        //             return -1;
+        //         } else {
+        //             return 1;
+        //         }
+        //         return 0;
+        //     }
+        // })
     </script>
 </body>
 

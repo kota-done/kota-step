@@ -1,2 +1,2 @@
 require('./bootstrap');
-require('./sale.js')
+require('./sale.js');

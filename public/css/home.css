@@ -6,3 +6,9 @@
 .goods_select{
  padding:10px 10px;
 }
+
+thead{
+    padding:10px 2px ;
+    width: 10px;
+    color: blue;
+}
